@@ -6,7 +6,7 @@ int main(void)
     COpenGL openGL;
     CMatrix matrix(30, 20);
 
-    if (!openGL.init(1600, 900))
+    if (!openGL.init(1200, 670))
         return -1;
     openGL.run(matrix);
 

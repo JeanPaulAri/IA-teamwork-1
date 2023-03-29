@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <time.h>
 #include <iostream>
+#include "CInput.h"
 
 CMatrix::CMatrix(int width, int height) :
     width(width), height(height), state(0)
@@ -24,12 +25,8 @@ void CMatrix::init()
     matrix = new bool[width * height];
     for (int i = 0; i < width * height; i++)
     {
-        matrix[i] = rand() % 2;
+        matrix[i] = true;
     }
-    // ERASE
-    setNode(2, 4, true); setNode(20, 10, true);
-    setNode(3, 5, true); setNode(4, 6, true);
-    // END ERASE
 }
 
 bool CMatrix::getNode(int x, int y) const
@@ -82,6 +79,11 @@ bool CMatrix::checkNode(int x, int y) const
     return (0 <= x) && (x < width) && (0 <= y) && (y < height) && (getNode(x, y));
 }
 
+bool CMatrix::checkNode(Node n) const
+{
+    return checkNode(n.x, n.y);
+}
+
 void CMatrix::update()
 {
     switch (state)
@@ -101,6 +103,7 @@ void CMatrix::beginDFS(const Node& a, const Node& b)
 {
     target = b;
     state = 1;
+    selected_nodes.clear();
     DFS_path.clear();
     DFS_evaluated.clear();
     BFS_queue.clear();
@@ -112,6 +115,7 @@ void CMatrix::beginBFS(const Node& a, const Node& b)
 {
     target = b;
     state = 2;
+    selected_nodes.clear();
     DFS_path.clear();
     DFS_evaluated.clear();
     BFS_queue.clear();
@@ -194,6 +198,26 @@ void CMatrix::BFS()
 void CMatrix::endDFS(bool s)
 {
     state = 4 - s;
+}
+
+void CMatrix::resize(int percent)
+{
+    /* Fix bugs */
+    DFS_path.clear();
+    DFS_evaluated.clear();
+    BFS_queue.clear();
+    BFS_evaluated.clear();
+    selected_nodes.clear();
+    state = 0;
+    /* Modify matrix */
+    for (int i = 0; i < width * height; i++)
+    {
+        matrix[i] = true;
+    }
+    for (int numNodes = width * height * (100 - percent) / 100; numNodes > 0; numNodes--)
+    {
+        matrix[rand() % (width * height)] = false;
+    }
 }
 
 void CMatrix::endBFS(bool s)

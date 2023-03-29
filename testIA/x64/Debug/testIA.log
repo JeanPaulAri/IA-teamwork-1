@@ -1,1 +1,14 @@
-﻿  testIA.vcxproj -> C:\Users\heibh\source\repos\testIA\x64\Debug\testIA.exe
+﻿  CInput.cpp
+  CMatrix.cpp
+C:\Users\heibh\source\repos\testIA\testIA\CMatrix.cpp(22,15): warning C4244: 'argumento': conversión de 'time_t' a 'unsigned int'; posible pérdida de datos
+  COpenGL.cpp
+C:\Users\heibh\source\repos\testIA\testIA\COpenGL.cpp(69,53): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\heibh\source\repos\testIA\testIA\COpenGL.cpp(69,50): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\heibh\source\repos\testIA\testIA\COpenGL.cpp(113,14): warning C4244: 'inicializando': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\heibh\source\repos\testIA\testIA\COpenGL.cpp(114,14): warning C4244: 'inicializando': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\heibh\source\repos\testIA\testIA\COpenGL.cpp(115,14): warning C4244: 'inicializando': conversión de 'int' a 'float'; posible pérdida de datos
+C:\Users\heibh\source\repos\testIA\testIA\COpenGL.cpp(218,64): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
+C:\Users\heibh\source\repos\testIA\testIA\COpenGL.cpp(218,41): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
+  Source.cpp
+  Generando código...
+  testIA.vcxproj -> C:\Users\heibh\source\repos\testIA\x64\Debug\testIA.exe

@@ -3,7 +3,9 @@
 
 COpenGL::COpenGL(int frameT) :
     frame_time(frameT), current_frame(0), frame_count(frameT)
-{}
+{
+    input.context = this;
+}
 
 bool COpenGL::init(int windowW, int windowH)
 {
@@ -12,6 +14,8 @@ bool COpenGL::init(int windowW, int windowH)
         return false;
 
     /* Create a windowed mode window and its OpenGL context */
+    wWidth = windowW;
+    wHeight = windowH;
     window = glfwCreateWindow(windowW, windowH, "OpenGL", NULL, NULL);
     if (!window)
     {
@@ -28,8 +32,56 @@ bool COpenGL::init(int windowW, int windowH)
     return true;
 }
 
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    CInput* input = static_cast<CInput*>(glfwGetWindowUserPointer(window));
+    CMatrix* matrix_ptr = input->matrix;
+
+    if (matrix_ptr == nullptr) return;
+
+    if (key == GLFW_KEY_B && action == GLFW_PRESS && matrix_ptr->selected_nodes.size() == 2)
+    {
+        matrix_ptr->beginBFS(matrix_ptr->selected_nodes[0], matrix_ptr->selected_nodes[1]);
+    }
+    if (key == GLFW_KEY_D && action == GLFW_PRESS && matrix_ptr->selected_nodes.size() == 2)
+    {
+        matrix_ptr->beginDFS(matrix_ptr->selected_nodes[0], matrix_ptr->selected_nodes[1]);
+    }
+    if (GLFW_KEY_0 <= key && key <= GLFW_KEY_9 && action == GLFW_PRESS)
+    {
+        int value = (key - GLFW_KEY_0) * 10;
+        matrix_ptr->resize(value ? value : 100);
+    }
+}
+
+void mouseCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    CInput* input = static_cast<CInput*>(glfwGetWindowUserPointer(window));
+    CMatrix* matrix_ptr = input->matrix;
+    COpenGL* context_ptr = input->context;
+    if (matrix_ptr == nullptr || context_ptr == nullptr) return;
+
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    {
+        double x, y;
+        glfwGetCursorPos(window, &x, &y);
+        context_ptr->convertToGLCoor(x, y);
+        auto node = context_ptr->getNodePosition(x, y);
+
+        if (matrix_ptr->checkNode(node) && matrix_ptr->selected_nodes.size() < 2)
+        {
+            matrix_ptr->selected_nodes.push_back(node);
+        }
+    }
+}
+
 void COpenGL::run(CMatrix& matrix)
 {
+    input.matrix = &matrix;
+    glfwSetWindowUserPointer(window, &input);
+    glfwSetKeyCallback(window, keyCallback);
+    glfwSetMouseButtonCallback(window, mouseCallback);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -38,7 +90,7 @@ void COpenGL::run(CMatrix& matrix)
             // ERASE
             if (current_frame == 7)
             {
-                matrix.beginBFS(CMatrix::Node(2, 4), CMatrix::Node(20, 10));
+                //matrix.beginBFS(CMatrix::Node(2, 4), CMatrix::Node(20, 10));
             }
             // END ERASE
             frame_count = 0;
@@ -50,6 +102,7 @@ void COpenGL::run(CMatrix& matrix)
     }
     glfwTerminate();
 }
+
 
 void COpenGL::draw(const CMatrix& matrix)
 {
@@ -132,6 +185,8 @@ void COpenGL::draw(const CMatrix& matrix)
                     glColor3f(cR, cG, cB);
                 if (CMatrix::Node(x, y) == matrix.target)
                     glColor3f(cR, cB || cG, 0);
+                if (std::find(matrix.selected_nodes.begin(), matrix.selected_nodes.end(), CMatrix::Node(x, y)) != matrix.selected_nodes.end())
+                    glColor3f(1, 0, 1);
                 glVertex2f(coorX - sepX / 10.0f, coorY);
                 glVertex2f(coorX, coorY - sepY / 10.0f);
                 glVertex2f(coorX + sepX / 10.0f, coorY);
@@ -147,4 +202,18 @@ void COpenGL::draw(const CMatrix& matrix)
 
     /* Poll for and process events */
     glfwPollEvents();
+}
+
+void COpenGL::convertToGLCoor(double& x, double& y)
+{
+    x = (float)(2 * x) / (float)wWidth - 1;
+    y = -((float)(2 * y) / (float)wHeight - 1);
+}
+
+CMatrix::Node COpenGL::getNodePosition(float x, float y)
+{
+    /* Calculate space */
+    float sepX = 2.0f / (float)(input.matrix->width + 1);
+    float sepY = 2.0f / (float)(input.matrix->height + 1);
+    return CMatrix::Node((x + 1) / sepX - 0.5f, (y + 1) / sepY - 0.5f);
 }
