@@ -5,7 +5,11 @@
       <FullPath>C:\Users\heibh\source\repos\testIA\x64\Debug\testIA.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
-  <ContentFiles />
+  <ContentFiles>
+    <ContentFile>
+      <FullPath>C:\Users\heibh\source\repos\testIA\testIA\.gitignore</FullPath>
+    </ContentFile>
+  </ContentFiles>
   <SatelliteDlls />
   <NonRecipeFileRefs />
 </Project>
